@@ -111,4 +111,4 @@ async def stats(ctx, *args):
     except (ValueError, KeyError, IndexError):
         await ctx.send("Error: player not found")
 
-bot.run("MTA5OTg2NjI3OTE1NTg3MTg1NQ.GyM8QQ.X-qymbHzRqtr8hnCK8fuIRHK5y-O7LH7swbSdA")
+bot.run("")

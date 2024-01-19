@@ -32,8 +32,8 @@ try:
     player_data = json.loads(player_response.text)["data"][0]
 
     player_id = player_data["id"]
-
-    game_stats_url = f"https://www.balldontlie.io/api/v1/stats?seasons[]=2022&player_ids[]={player_id}&per_page=100"
+    print(player_id)
+    game_stats_url = f"https://www.balldontlie.io/api/v1/stats?seasons[]=2023&player_ids[]={player_id}&per_page=100"
     response = requests.get(game_stats_url)
     game_response = requests.get(game_stats_url)
     game_response.raise_for_status()
@@ -43,7 +43,7 @@ try:
     game_data = [game for game in game_data if int(game["min"]) > 0]
 
     # Get player's past 5 games stats
-    past_games_url = f"https://www.balldontlie.io/api/v1/season_averages?seasons[]=2022&player_ids[]={player_id}&per_page=5"
+    past_games_url = f"https://www.balldontlie.io/api/v1/season_averages?seasons[]=2023&player_ids[]={player_id}&per_page=5"
     past_response = requests.get(past_games_url)
     past_response.raise_for_status()
     past_data = json.loads(past_response.text)["data"]
@@ -53,7 +53,7 @@ try:
     past_avg_stat = np.mean(past_stat_values)
 
     # Get player's average versus a specific team
-    team_stats_url = f"https://www.balldontlie.io/api/v1/stats?seasons[]=2022&player_ids[]={player_id}&per_page=100"
+    team_stats_url = f"https://www.balldontlie.io/api/v1/stats?seasons[]=2023&player_ids[]={player_id}&per_page=100"
     team_response = requests.get(team_stats_url)
     team_response.raise_for_status()
     team_data = json.loads(team_response.text)["data"]

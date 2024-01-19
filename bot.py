@@ -3,7 +3,7 @@ from discord.ext import commands
 import requests
 import json
 import numpy as np
-import os
+from config import TOKEN 
 
 intents = discord.Intents.all()
 intents.members = True
@@ -114,4 +114,5 @@ async def stats(ctx, *args):
 
 
 
-bot.run("MTA5OTg2NjI3OTE1NTg3MTg1NQ.G730nU.EWolcfQ4P748jpfowN5-RTYLVClKHbdejwKhDg")
+
+bot.run(TOKEN)

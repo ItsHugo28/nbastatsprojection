@@ -1,9 +1,10 @@
 import discord
 from discord.ext import commands
+from config import TOKEN
 import requests
 import json
 import numpy as np
-from config import TOKEN 
+import os
 
 intents = discord.Intents.all()
 intents.members = True
@@ -31,20 +32,22 @@ async def stats(ctx, *args):
         return
 
     stat_key = stat_mappings[stat_category]
+    first_name, last_name = player_name.split()
+    player_stats_url = f"https://api.balldontlie.io/v1/players?first_name={first_name}&last_name={last_name}&per_page=100"
 
-    player_stats_url = f"https://www.balldontlie.io/api/v1/players?search={player_name}"
+    headers = {"Authorization": f"API_KEY"}
 
     try:
 
-        player_response = requests.get(player_stats_url)
+        player_response = requests.get(player_stats_url, headers=headers)
         player_response.raise_for_status()
         player_data = json.loads(player_response.text)["data"][0]
 
         player_id = player_data["id"]
 
-        game_stats_url = f"https://www.balldontlie.io/api/v1/stats?seasons[]=2023&player_ids[]={player_id}&per_page=100"
-        response = requests.get(game_stats_url)
-        game_response = requests.get(game_stats_url)
+        game_stats_url = f"https://api.balldontlie.io/v1/stats?seasons[]=2023&player_ids[]={player_id}&per_page=100"
+        response = requests.get(game_stats_url, headers=headers)
+        game_response = requests.get(game_stats_url, headers=headers)
         game_response.raise_for_status()
         game_data = json.loads(game_response.text)["data"]
 
@@ -55,8 +58,8 @@ async def stats(ctx, *args):
         game_data.sort(key=lambda x: x["game"]["date"])
 
         # Get player's past 5 games stats
-        past_games_url = f"https://www.balldontlie.io/api/v1/season_averages?seasons[]=2023&player_ids[]={player_id}&per_page=5"
-        past_response = requests.get(past_games_url)
+        past_games_url = f"https://api.balldontlie.io/v1/season_averages?season=2023&player_ids[]={player_id}&per_page=5"
+        past_response = requests.get(past_games_url, headers=headers)
         past_response.raise_for_status()
         past_data = json.loads(past_response.text)["data"]
         past_stat_values = []
@@ -65,8 +68,8 @@ async def stats(ctx, *args):
         past_avg_stat = np.mean(past_stat_values)
 
         # Get player's average versus a specific team
-        team_stats_url = f"https://www.balldontlie.io/api/v1/stats?seasons[]=2023&player_ids[]={player_id}&per_page=100"
-        team_response = requests.get(team_stats_url)
+        team_stats_url = f"https://api.balldontlie.io/v1/stats?seasons[]=2023&player_ids[]={player_id}&per_page=100"
+        team_response = requests.get(team_stats_url, headers=headers)
         team_response.raise_for_status()
         team_data = json.loads(team_response.text)["data"]
 
@@ -111,8 +114,6 @@ async def stats(ctx, *args):
         await ctx.send(f"Error getting data: {err}")
     except (ValueError, KeyError, IndexError):
         await ctx.send("Error: player not found")
-
-
 
 
 bot.run(TOKEN)
